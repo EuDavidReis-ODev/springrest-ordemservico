@@ -14,5 +14,7 @@ public interface ClienteRepository extends JpaRepository<Cliente,Long> {
 	/*findByNomeContaining procura por alguma ocorrencia que contenha o nome passado*/
 	List<Cliente> findByNomeContaining(String nome);
 	
+	/*Procura no BD um cliente com o email especificado.*/
+	Cliente findByEmail(String email);
 	
 }

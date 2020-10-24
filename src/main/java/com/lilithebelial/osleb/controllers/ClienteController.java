@@ -20,12 +20,19 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import com.lilithebelial.osleb.domain.model.Cliente;
 import com.lilithebelial.osleb.domain.repository.ClienteRepository;
+import com.lilithebelial.osleb.domain.service.CrudClienteService;
 @RestController
 @RequestMapping("/clientes")
 public class ClienteController {
 	
+	/*ClienteRepository para consulta*/
 	@Autowired
 	private ClienteRepository clienteRepository;
+	
+	/*Objeto que gerencia o CRUD de clientes. Abstraindo responsabilidades.*/
+	@Autowired
+	private CrudClienteService crudCliente;
+	
 	
 	/*Retorna lista com todos os clientes*/
 	@GetMapping
@@ -52,7 +59,7 @@ public class ClienteController {
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
 	public Cliente addCliente(@Valid @RequestBody Cliente cliente) {
-		return clienteRepository.save(cliente);
+		return crudCliente.salvar(cliente);
 	}
 	
 	/*Atualiza um cliente, identificando pelo ID que vem no path da requisição, e o responseBody=>Cliente*/
@@ -63,7 +70,7 @@ public class ClienteController {
 			return ResponseEntity.notFound().build();
 		}
 		cliente.setId(id);
-		clienteRepository.save(cliente);
+		cliente = crudCliente.salvar(cliente);
 		
 		return ResponseEntity.ok(cliente);
 	}
@@ -76,7 +83,7 @@ public class ClienteController {
 		if(!clienteRepository.existsById(clienteId)){
 			return ResponseEntity.notFound().build();
 		}
-		clienteRepository.deleteById(clienteId);
+		crudCliente.excluir(clienteId);
 		return ResponseEntity.noContent().build();
 	}
 }

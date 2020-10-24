@@ -1,12 +1,18 @@
-package com.lilithebelial.osleb.api.execeptionhandler;
+package com.lilithebelial.osleb.api.exceptionhandler;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
+/*Anotação que diz para incluir apenas as propriedades não nulas.*/
+@JsonInclude(Include.NON_NULL)
 public class Problema {
  private int status;
- private String tituto;
+ private String titulo;
  private LocalDateTime dataHora;
+ 
  /*Controla o nome do campo inválido, e uma mensagem sobre o erro*/
  public static class Campo{
 	private String campo;
@@ -40,7 +46,7 @@ public class Problema {
  
  Problema(int status,String titulo,LocalDateTime dataHora){
 	 this.status = status;
-	 this.tituto = titulo;
+	 this.titulo = titulo;
 	 this.dataHora = dataHora;
 	 
  }
@@ -55,11 +61,11 @@ public class Problema {
 }
 
  public String getTituto() {
-	return tituto;
+	return titulo;
 }
 
  public void setTituto(String tituto) {
-	this.tituto = tituto;
+	this.titulo = tituto;
 }
 
  public LocalDateTime getDataHora() {
