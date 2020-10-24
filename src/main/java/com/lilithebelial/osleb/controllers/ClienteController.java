@@ -1,22 +1,79 @@
 package com.lilithebelial.osleb.controllers;
 
-import java.util.Arrays;
-import java.util.List;
 
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import com.lilithebelial.osleb.domain.model.Cliente;
+import com.lilithebelial.osleb.domain.repository.ClienteRepository;
 @RestController
+@RequestMapping("/clientes")
 public class ClienteController {
-	@GetMapping("/clientes")
+	
+	@Autowired
+	private ClienteRepository clienteRepository;
+	
+	/*Retorna lista com todos os clientes*/
+	@GetMapping
 	public List<Cliente> listar() {
-		Cliente c1 = new Cliente(99999983,"Marcos Silva","marcos@silva.com","1236412278");
-		Cliente c2 = new Cliente(93599983,"Alan Pereira","alan@pereira.com","1244236577");
-		Cliente c3 = new Cliente(19934923,"Oswaldo Silva","marcos@silva.com","1536457851");
-
 		
-		return Arrays.asList(c1,c2,c3);
+		return clienteRepository.findAll();
+		
+		//return clienteRepository.findByNomeContaining("rcos");
 	}
 
+	/*Retorna cliente especifico, usando como referencia o Id*/
+	@GetMapping("/{clienteId}")
+	public ResponseEntity<Cliente> buscar(@PathVariable Long clienteId) {
+		Optional<Cliente> cliente = clienteRepository.findById(clienteId);
+		
+		if(cliente.isPresent()) {
+			return ResponseEntity.ok(cliente.get());
+		}else {
+			return ResponseEntity.notFound().build();
+		}
+	}
+	
+	/*Adiciona um cliente,convertendo o body do request em um objeto Cliente*/
+	@PostMapping
+	@ResponseStatus(HttpStatus.CREATED)
+	public Cliente addCliente(@RequestBody Cliente cliente) {
+		return clienteRepository.save(cliente);
+	}
+	
+	/*Atualiza um cliente, identificando pelo ID que vem no path da requisição, e o responseBody=>Cliente*/
+	@PutMapping("/{id}")
+	public ResponseEntity<Cliente> updateCliente(@PathVariable Long id,@RequestBody Cliente cliente) {
+	
+		if(!clienteRepository.existsById(id)) {
+			return ResponseEntity.notFound().build();
+		}
+		cliente.setId(id);
+		clienteRepository.save(cliente);
+		
+		return ResponseEntity.ok(cliente);
+	}
 
+	@DeleteMapping("/{clienteId}")
+	public ResponseEntity<Void> deletaCliente(@PathVariable Long clienteId) {
+		
+		
+		if(!clienteRepository.existsById(clienteId)){
+			return ResponseEntity.notFound().build();
+		}
+		clienteRepository.deleteById(clienteId);
+		return ResponseEntity.noContent().build();
+	}
 }
