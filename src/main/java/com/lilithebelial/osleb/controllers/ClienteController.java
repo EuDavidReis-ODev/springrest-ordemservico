@@ -4,9 +4,12 @@ package com.lilithebelial.osleb.controllers;
 import java.util.List;
 import java.util.Optional;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -49,13 +52,13 @@ public class ClienteController {
 	/*Adiciona um cliente,convertendo o body do request em um objeto Cliente*/
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
-	public Cliente addCliente(@RequestBody Cliente cliente) {
+	public Cliente addCliente(@Valid @RequestBody Cliente cliente) {
 		return clienteRepository.save(cliente);
 	}
 	
 	/*Atualiza um cliente, identificando pelo ID que vem no path da requisição, e o responseBody=>Cliente*/
 	@PutMapping("/{id}")
-	public ResponseEntity<Cliente> updateCliente(@PathVariable Long id,@RequestBody Cliente cliente) {
+	public ResponseEntity<Cliente> updateCliente(@PathVariable Long id,@Valid @RequestBody Cliente cliente) {
 	
 		if(!clienteRepository.existsById(id)) {
 			return ResponseEntity.notFound().build();
@@ -66,6 +69,7 @@ public class ClienteController {
 		return ResponseEntity.ok(cliente);
 	}
 
+	/*Exclui o cliente com base no ID passado na requisição*/
 	@DeleteMapping("/{clienteId}")
 	public ResponseEntity<Void> deletaCliente(@PathVariable Long clienteId) {
 		
